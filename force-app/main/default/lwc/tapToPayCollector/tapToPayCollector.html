@@ -1,0 +1,171 @@
+<template>
+    <div class="ttp-shell">
+
+        <template if:true={configurationMissing}>
+            <div class="ttp-alert" role="alert">Configure a Merchant Account ID in tapToPayConfig before collecting payments.</div>
+        </template>
+        <template if:true={outcomeUnknown}>
+            <div class="ttp-alert" role="alert">Payment outcome is unknown. Check Salesforce Payments and Stripe before another attempt. A timeout does not cancel the payment.</div>
+            <button type="button" class="ttp-btn ttp-btn_neutral" onclick={handleVerifiedUnpaid}>I verified this attempt is unpaid</button>
+        </template>
+        <!-- Payments Service unavailable (browser / non-capable device) -->
+        <template if:true={paymentServiceUnavailable}>
+            <div class="ttp-alert" role="alert">
+                Payments Service is unavailable. Open this Work Order in the
+                Salesforce Field Service mobile app on a Tap-to-Pay device.
+            </div>
+        </template>
+
+        <!-- ============ STEP 1: AMOUNT + CONNECTIVITY ============ -->
+        <template if:true={isAmountStep}>
+            <div class="ttp-card">
+                <header class="ttp-header">
+                    <span class="ttp-title">New Payment</span>
+                    <template if:true={workOrderNumber}>
+                        <span class="ttp-chip-badge">{workOrderNumber}</span>
+                    </template>
+                </header>
+
+                <div class="ttp-body">
+                    <template if:false={payerAccountIdValue}><div class="ttp-note" role="status">Associate this Work Order with the customer Account before collecting a payment.</div></template>
+                    <lightning-input
+                        type="number"
+                        label="Amount"
+                        value={amountValue}
+                        onchange={handleAmountInput}
+                        min="0.01" disabled={inputsDisabled}
+                        step="0.01"
+                        required
+                        class={inputValidationClass}>
+                    </lightning-input>
+
+                    <lightning-combobox
+                        name="currency"
+                        label="Currency"
+                        value={currencyCodeValue}
+                        options={currencyOptions}
+                        disabled={inputsDisabled} onchange={handleCurrencyCodeInput}
+                        class="slds-m-top_small">
+                    </lightning-combobox>
+
+                    <button type="button"
+                        class="ttp-btn ttp-btn_neutral slds-m-top_medium"
+                        onclick={handleBeginSupportedMethodCheck}
+                        disabled={availabilityCheckDisabled}>
+                        Verify Tap to Pay
+                    </button>
+
+                    <template if:true={paymentsServiceResponse}>
+                        <div class="ttp-note" role="status">{paymentsServiceResponse}</div>
+                    </template>
+                </div>
+
+                <footer class="ttp-footer">
+                    <button type="button"
+                        class="ttp-btn ttp-btn_brand"
+                        onclick={handleNext}
+                        disabled={nextDisabled}>
+                        Next
+                    </button>
+                </footer>
+            </div>
+        </template>
+
+        <!-- ============ STEP 2: CHECKOUT (TIP + PAY) ============ -->
+        <template if:true={isCheckoutStep}>
+            <div class="ttp-card">
+                <header class="ttp-header ttp-header_checkout">
+                    <button type="button" class="ttp-back" disabled={inputsDisabled} onclick={handleBack}>
+                        <lightning-icon icon-name="utility:chevronleft" size="x-small" alternative-text="Back"></lightning-icon>
+                        <span>Back</span>
+                    </button>
+                    <span class="ttp-title ttp-title_center">Checkout</span>
+                    <span class="ttp-back-spacer"></span>
+                </header>
+
+                <div class="ttp-body">
+                    <span class="ttp-section-label">Tips</span>
+                    <div class="ttp-tip-row" role="group" aria-label="Tip amount">
+                        <template for:each={tipOptions} for:item="tip">
+                            <button type="button"
+                                key={tip.key}
+                                class={tip.cssClass}
+                                data-percent={tip.percent}
+                                aria-pressed={tip.selected} disabled={inputsDisabled} onclick={handleTipSelect}>
+                                {tip.label}
+                            </button>
+                        </template>
+                        <button type="button" class={otherChipClass} aria-pressed={showCustomTip} disabled={inputsDisabled} onclick={handleOtherTip}>Other</button>
+                    </div>
+
+                    <template if:true={showCustomTip}>
+                        <lightning-input
+                            type="number"
+                            label="Custom tip"
+                            value={customTipAmount}
+                            onchange={handleCustomTipInput}
+                            formatter="currency"
+                            step="0.01"
+                            class="slds-m-top_x-small">
+                        </lightning-input>
+                    </template>
+
+                    <template if:true={paymentsServiceResponse}><div class="ttp-note" role="status">{paymentsServiceResponse}</div></template>
+                    <div class="ttp-summary">
+                        <div class="ttp-line">
+                            <span class="ttp-line-label">Subtotal</span>
+                            <span class="ttp-line-amt ttp-line-amt_muted">{subtotalDisplay}</span>
+                        </div>
+                        <div class="ttp-line">
+                            <span class="ttp-line-label">Tax</span>
+                            <span class="ttp-line-amt">{taxDisplay}</span>
+                        </div>
+                        <div class="ttp-line">
+                            <span class="ttp-line-label">Tips</span>
+                            <span class="ttp-line-amt">{tipDisplay}</span>
+                        </div>
+                        <div class="ttp-divider"></div>
+                        <div class="ttp-line ttp-line_total">
+                            <span class="ttp-line-label">Total</span>
+                            <span class="ttp-total-amt">{totalDisplay}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <footer class="ttp-footer">
+                    <button type="button"
+                        class="ttp-btn ttp-btn_brand ttp-btn_pay"
+                        onclick={handleCollectPayment}
+                        disabled={payDisabled}>
+                        <lightning-icon icon-name="utility:money" size="x-small" variant="inverse" class="slds-m-right_x-small"></lightning-icon>
+                        Pay {totalDisplay}
+                    </button>
+                </footer>
+            </div>
+        </template>
+
+        <!-- ============ DONE ============ -->
+        <template if:true={isDoneStep}>
+            <div class="ttp-card ttp-card_done">
+                <div class="ttp-done-check">
+                    <lightning-icon icon-name="utility:success" size="large" variant="success"></lightning-icon>
+                </div>
+                <span class="ttp-done-title">Payment Collected</span>
+                <span class="ttp-done-total">{totalDisplay}</span>
+                <template if:true={paymentsServiceResponse}>
+                    <div class="ttp-note ttp-note_center">{paymentsServiceResponse}</div>
+                </template>
+                <button type="button" class="ttp-btn ttp-btn_neutral slds-m-top_medium" onclick={handleStartOver}>
+                    New Payment
+                </button>
+            </div>
+        </template>
+
+        <!-- Processing overlay -->
+        <template if:true={spinnerEnabled}>
+            <div class="ttp-overlay">
+                <lightning-spinner alternative-text="Processing" size="medium"></lightning-spinner>
+            </div>
+        </template>
+    </div>
+</template>

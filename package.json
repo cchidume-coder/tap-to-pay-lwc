@@ -1,0 +1,13 @@
+{
+  "name": "tap-to-pay-lwc",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Standalone Field Service Tap to Pay checkout with optional tipping",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "validate": "node scripts/validate.cjs"
+  },
+  "devDependencies": {
+    "@lwc/compiler": "8.26.1"
+  }
+}

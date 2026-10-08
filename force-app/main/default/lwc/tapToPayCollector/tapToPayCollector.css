@@ -1,0 +1,250 @@
+/*
+ * Sleek, rounded, white "Checkout" styling.
+ * Uses SLDS2 global styling hooks (--slds-g-*) with fallbacks so it also
+ * renders correctly on SLDS1. Radii/colors mirror the SLDS2 look & feel.
+ */
+
+:host {
+    --ttp-radius: var(--slds-g-radius-border-3, 1rem);
+    --ttp-radius-sm: var(--slds-g-radius-border-2, 0.5rem);
+    --ttp-surface: var(--slds-g-color-surface-1, #ffffff);
+    --ttp-surface-alt: var(--slds-g-color-surface-container-1, #f4f6f9);
+    --ttp-border: var(--slds-g-color-border-1, #e5e5e5);
+    --ttp-text: var(--slds-g-color-on-surface-1, #181818);
+    --ttp-text-muted: var(--slds-g-color-on-surface-2, #5c5c5c);
+    --ttp-accent: var(--slds-g-color-accent-1, #0176d3);
+    --ttp-accent-contrast: var(--slds-g-color-on-accent-1, #ffffff);
+    --ttp-amount-muted: var(--ttp-accent); /* subtotal accent, matching the reference */
+
+    display: block;
+    font-family: var(--slds-g-font-family, inherit);
+}
+
+.ttp-shell {
+    position: relative;
+    padding: 0.75rem;
+    background: var(--ttp-surface-alt);
+    min-height: 100%;
+}
+
+/* ---------- card ---------- */
+.ttp-card {
+    background: var(--ttp-surface);
+    border-radius: var(--ttp-radius);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- header ---------- */
+.ttp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--ttp-border);
+}
+.ttp-header_checkout {
+    justify-content: space-between;
+}
+.ttp-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--ttp-text);
+}
+.ttp-title_center {
+    flex: 1;
+    text-align: center;
+}
+.ttp-back,
+.ttp-back-spacer {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 4rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ttp-accent);
+    font-size: 0.9375rem;
+    padding: 0;
+}
+.ttp-back-spacer { cursor: default; }
+.ttp-chip-badge {
+    background: var(--ttp-surface-alt);
+    color: var(--ttp-text-muted);
+    border-radius: 999px;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* ---------- body / footer ---------- */
+.ttp-body { padding: 1.25rem; }
+.ttp-footer {
+    padding: 1rem 1.25rem 1.25rem;
+}
+
+.ttp-section-label {
+    display: block;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ttp-text);
+    margin-bottom: 0.5rem;
+}
+
+/* ---------- tip chips ---------- */
+.ttp-tip-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+}
+.tip-chip {
+    padding: 0.75rem 0.25rem;
+    border-radius: var(--ttp-radius-sm);
+    border: 1px solid var(--ttp-border);
+    background: var(--ttp-surface);
+    color: var(--ttp-text-muted);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+.tip-chip:hover {
+    border-color: var(--ttp-accent);
+}
+.tip-chip.is-selected {
+    border-color: var(--ttp-amount-muted);
+    color: var(--ttp-amount-muted);
+    box-shadow: 0 0 0 1px var(--ttp-amount-muted) inset;
+}
+
+/* ---------- summary ---------- */
+.ttp-summary {
+    margin-top: 1.5rem;
+}
+.ttp-line {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+}
+.ttp-line-label {
+    font-size: 1rem;
+    color: var(--ttp-text);
+}
+.ttp-line-amt {
+    font-size: 1rem;
+    color: var(--ttp-text);
+    font-variant-numeric: tabular-nums;
+}
+.ttp-line-amt_muted {
+    color: var(--ttp-amount-muted);
+}
+.ttp-divider {
+    height: 1px;
+    background: var(--ttp-border);
+    margin: 0.6rem 0;
+}
+.ttp-line_total .ttp-line-label {
+    font-weight: 700;
+    font-size: 1.0625rem;
+}
+.ttp-total-amt {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--ttp-text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- buttons ---------- */
+.ttp-btn {
+    width: 100%;
+    border: none;
+    border-radius: 999px;
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.12s ease, background 0.12s ease;
+}
+.ttp-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.ttp-btn_brand {
+    background: var(--ttp-accent);
+    color: var(--ttp-accent-contrast);
+}
+.ttp-btn_brand:not(:disabled):hover { filter: brightness(0.94); }
+.ttp-btn_neutral {
+    background: var(--ttp-surface);
+    color: var(--ttp-text);
+    border: 1px solid var(--ttp-border);
+}
+.ttp-btn_neutral:not(:disabled):hover { background: var(--ttp-surface-alt); }
+.ttp-btn_pay { padding-block: 1rem; }
+
+/* ---------- note / alert ---------- */
+.ttp-note {
+    margin-top: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: var(--ttp-radius-sm);
+    background: var(--ttp-surface-alt);
+    color: var(--ttp-text-muted);
+    font-size: 0.8125rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.ttp-note_center { text-align: center; }
+.ttp-alert {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--ttp-radius-sm);
+    background: #fef1ee;
+    color: #8c1c13;
+    font-size: 0.8125rem;
+    border: 1px solid #f5c6c1;
+}
+
+/* ---------- done ---------- */
+.ttp-card_done {
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1.25rem;
+}
+.ttp-done-check { margin-bottom: 0.75rem; }
+.ttp-done-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--ttp-text);
+}
+.ttp-done-total {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ttp-text);
+    margin-top: 0.25rem;
+}
+
+/* ---------- processing overlay ---------- */
+.ttp-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: var(--ttp-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+
+button:focus-visible { outline: 2px solid var(--ttp-accent); outline-offset: 3px; }
+.ttp-back { min-height: 44px; }
+.tip-chip { min-height: 44px; }
+@media (prefers-reduced-motion: reduce) { .tip-chip, .ttp-btn { transition: none; } }
+@media (max-width: 340px) { .ttp-body, .ttp-header, .ttp-footer { padding: 1rem; } .ttp-tip-row { gap: 0.25rem; } }

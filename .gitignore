@@ -1,0 +1,9 @@
+.sf/
+.sfdx/
+.claude/
+.codex/
+node_modules/
+.env*
+*.log
+.DS_Store
+coverage/
