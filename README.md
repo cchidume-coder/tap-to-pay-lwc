@@ -72,7 +72,7 @@ git clone https://github.com/cchidume-coder/tap-to-pay-lwc.git
 cd tap-to-pay-lwc
 ```
 
-While the repository is private, cloning requires GitHub access to it.
+The repository is public and can be cloned without collaborator access.
 
 Edit [`tapToPayConfig.js`](force-app/main/default/lwc/tapToPayConfig/tapToPayConfig.js):
 
@@ -237,6 +237,6 @@ The controller tests use platform stubs to exercise calculations, availability g
 - [Record action configuration](https://developer.salesforce.com/docs/platform/lwc/guide/targets-lightning-record-action.html)
 - [Stripe Terminal testing](https://docs.stripe.com/terminal/references/testing)
 
-## 🔐 Private review & licensing
+## 📄 Licensing
 
-This repository is private for review. License selection is pending; no open-source license has been granted yet. Choose a license before a public release intended for reuse. Compare the options in [LICENSE-OPTIONS.md](LICENSE-OPTIONS.md).
+This repository is public. License selection is pending; public visibility does not itself grant an open-source license or general reuse permission. Compare the options in [LICENSE-OPTIONS.md](LICENSE-OPTIONS.md).
